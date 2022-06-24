@@ -1,0 +1,37 @@
+# Copyright 2020 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# This sample build has exactly one step: build a new container image using this
+# repository as source. Here we use the 'docker' image to build the image and
+# tag it with the name of the image.
+substitutions:
+  _GKE_ZONE: 'us-west4-a'
+  _GKE_CLUSTER: 'blz-s-datagov-datahub-usw4-gke'
+steps:
+- name: 'us-west4-docker.pkg.dev/$PROJECT_ID/docker-repo/helm'
+  args: ['upgrade', '--install', 'relase1', '.', '--set','image.repository=us-west4-docker.pkg.dev/$PROJECT_ID/docker-repo/helloworld-webapp,image.tag=latest' ] # Replace image.tag=$SHORT_SHA'
+  #args: ['install', 'r1', '.', '--set','image.repository=gcr.io/$PROJECT_ID/helloworld-webapp,image.tag=latest' ] # Replace image.tag=$SHORT_SHA'
+  env:
+    - 'CLOUDSDK_COMPUTE_ZONE=$_GKE_ZONE'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=$_GKE_CLUSTER'
+    - 'DEBUG=true'
+
+# You can organize your builds with tags
+tags: ['helloworld']
+
+# You can configure more options than the ones listed here. Visit
+# https://cloud.google.com/cloud-build/docs/build-config to see the full list of
+# available options.
+options:
+  logging: CLOUD_LOGGING_ONLY
